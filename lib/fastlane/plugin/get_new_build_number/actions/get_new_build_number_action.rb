@@ -37,11 +37,11 @@ module Fastlane
           File.open(file, "w") { |f| f.write "#{highest_build_number}\n" }
         end
 
-        UI.message "Highest build number: #{highest_build_number}"
+        UI.success "Highest build number: #{highest_build_number}"
 
         if highest_build_number.is_a? Integer
           new_highest_build_number = highest_build_number + 1
-          UI.message "New build number: #{new_highest_build_number}"
+          UI.success "New build number: #{new_highest_build_number}"
           return new_highest_build_number
         else
           UI.error "Highest build number is not an Integer"

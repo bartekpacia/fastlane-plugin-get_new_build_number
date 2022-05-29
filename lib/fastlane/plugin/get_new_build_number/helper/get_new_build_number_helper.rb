@@ -6,12 +6,6 @@ module Fastlane
 
   module Helper
     class GetNewBuildNumberHelper
-      # class methods that you define here become available in your action
-      # as `Helper::GetNewBuildNumberHelper.your_method`
-      #
-      def self.show_message
-        UI.message("Hello from the get_new_build_number plugin helper!")
-      end
 
       def self.get_highest_build_number(
         bundle_identifier:nil,
@@ -112,7 +106,7 @@ module Fastlane
 
           return codes.max
         rescue
-          UI.error "Version code not found for track #{track}"
+          UI.message "Version code not found for track #{track}"
           return 0
         end
       end

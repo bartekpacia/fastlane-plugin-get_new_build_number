@@ -6,7 +6,7 @@ on:
       - "v*"
 
 jobs:
-  release-please:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Clone repository
