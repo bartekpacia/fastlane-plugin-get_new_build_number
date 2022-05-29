@@ -16,6 +16,8 @@ number.
 
 This is my take at automating this.
 
+### Features
+
 Supported services:
 
 - [x] App Store (via [app_store_build_number][app-store])
@@ -25,6 +27,63 @@ Supported services:
       [firebase_app_distribution_get_latest_release][fad])
 - [ ] App Center (via [appcenter_fetch_version_number][app-center])
 
+The highest build number is persisted in
+[$TMPDIR][ruby-tmpdir]`/highest_build_number.txt`, so you can use it across
+`fastlane` invocations. For example, you could safely do:
+
+```bash
+$ cd ios && bundle exec fastlane prod && cd ..
+$ cd android && bundle exec fastlane prod && cd ..
+$ cd symbian && bundle exec fastlane prod && cd .. # lol
+```
+
+The first `fastlane` invocation retrieves the _highest_ build number. Then, the
+2 subsequent invocations simply reuse the _highest_ build number from the file.
+
+The _new_ build number is derived using this complex forumla:
+
+```
+new_build_number = highest_build_number + 1
+```
+
+### Usage
+
+```ruby
+# android/fastlane/Fastfile
+
+default_platform(:android)
+
+platform :android do
+  desc "Deploy a new beta version to Google Play"
+  lane :beta do
+    build_number = get_new_build_number(
+      package_name: ENV["APP_PACKAGE_NAME"], # e.g com.example.yourapp
+      google_play_json_key_path: ENV["GOOGLE_PLAY_JSON_KEY_PATH"], # path to JSON key for authenticating with Google Play Android Developer API
+    ).to_s
+
+    build_android_app(
+      task: "bundleRelease",
+      project_dir: "..",
+      properties: {
+        "android.injected.version.code" => build_number,
+      },
+    )
+
+    upload_to_play_store(
+      track: "beta",
+      aab: "./build/outputs/bundle/release/android-release.aab",
+      json_key: ENV["GOOGLE_PLAY_JSON_KEY_PATH"],
+    )
+  end
+end
+```
+
+### Important note
+
+Please note that this action is simple and has no protection against concurrent
+builds. Is is probably unsafe to use in an environment when many releases happen
+in a short time frame.
+
 ## Getting Started
 
 This project is a [_fastlane_](https://github.com/fastlane/fastlane) plugin. To
@@ -32,7 +91,9 @@ get started with `fastlane-plugin-get_new_build_number`, add it to your project
 by running:
 
 ```
+
 fastlane add_plugin get_new_build_number
+
 ```
 
 ## About get_new_build_number
@@ -84,6 +145,7 @@ guide.
 
 [fastlane-plugin-badge]: https://rawcdn.githack.com/fastlane/fastlane/master/fastlane/assets/plugin-badge.svg
 [fastlane-plugin]: https://rubygems.org/gems/fastlane-plugin-get_new_build_number
+[ruby-tmpdir]: https://ruby-doc.org/stdlib-2.5.1/libdoc/tmpdir/rdoc/Dir.html#method-c-tmpdir
 [app-store]: https://docs.fastlane.tools/actions/app_store_build_number
 [testflight]: https://docs.fastlane.tools/actions/latest_testflight_build_number
 [google-play]: https://docs.fastlane.tools/actions/google_play_track_version_codes
