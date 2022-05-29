@@ -1,4 +1,6 @@
 require 'fastlane/action'
+require 'tmpdir'
+
 require_relative '../helper/get_new_build_number_helper'
 
 module Fastlane
@@ -14,9 +16,9 @@ module Fastlane
         UI.message("firebase_app_ios: #{params[:firebase_app_ios]}")
         UI.message("firebase_app_android: #{params[:firebase_app_android]}")
 
-        puts "pwd: #{Dir.pwd}"
+        file = "#{Dir.tmpdir}/highest_build_number.txt"
+        UI.message "Temp file location: #{file}"
 
-        file = "../../new_build_number.txt"
         if(File.exist?(file)) 
           UI.success "File with new number file exists. Reading build number from it..." 
           highest_build_number = File.read(file).to_i
@@ -30,7 +32,7 @@ module Fastlane
             firebase_json_key_path: params[:firebase_json_key_path],
             firebase_app_ios: params[:firebase_app_ios],
             firebase_app_android: params[:firebase_app_android],
-        )
+          )
           
           File.open(file, "w") { |f| f.write "#{highest_build_number}\n" }
         end
