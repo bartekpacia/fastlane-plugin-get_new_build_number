@@ -22,7 +22,7 @@ module Fastlane
           highest_build_number = File.read(file).to_i
         else 
           UI.message "File with new build number does not exist. New build number will be "\
-            "retrieved and file with it will be created."
+            "retrieved and temporary file with it will be created."
           highest_build_number = Helper::GetNewBuildNumberHelper.get_highest_build_number(
             bundle_identifier: params[:bundle_identifier],
             package_name: params[:package_name],
