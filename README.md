@@ -46,7 +46,23 @@ The _new_ build number is derived using this complex forumla:
 new_build_number = highest_build_number + 1
 ```
 
-### Usage
+## Usage
+
+### Example 1
+
+Simple use case. This will only take the latest version from Google Play. This
+might not seem very useful at first, but is _is_ when you have different version
+codes for different tracks (`production`, `beta`, `alpha`, `internal`).
+
+Let's say that your Play Console looks like this:
+
+- `production` is at version code `60`
+- `beta` is at version code `61`
+- `alpha` is at 2 version codes: `64` and `65` (becasue you're doing some fancy
+  testing)
+
+In this case, `get_new_build_number` action would return `66` (because it is
+higher than all the other build numbers).
 
 ```ruby
 # android/fastlane/Fastfile
@@ -77,6 +93,60 @@ platform :android do
   end
 end
 ```
+
+### Example 2
+
+If you provide more parameters, the plugin will take them into account. For
+example, if you pass `bundle_identifier` to `get_new_build_number`:
+
+```ruby
+platform :android do
+  desc "Deploy a new beta version to Google Play"
+  lane :beta do
+    build_number = get_new_build_number(
+      bundle_identifier: ENV["APP_BUNDLE_ID"], # e.g com.example.yourApp
+      package_name: ENV["APP_PACKAGE_NAME"], # e.g com.example.yourapp
+      google_play_json_key_path: ENV["GOOGLE_PLAY_JSON_KEY_PATH"], # path to JSON key for authenticating with Google Play Android Developer API
+    ).to_s
+
+    build_android_app(
+      task: "bundleRelease",
+      project_dir: "..",
+      properties: {
+        "android.injected.version.code" => build_number,
+      },
+    )
+
+    upload_to_play_store(
+      track: "beta",
+      aab: "./build/outputs/bundle/release/android-release.aab",
+      json_key: ENV["GOOGLE_PLAY_JSON_KEY_PATH"],
+    )
+  end
+end
+```
+
+then also build numbers in App Store will be taken into account.
+
+Building on the previous example, let's say that your Play Console looks like
+this (same as before):
+
+- `production` is at version code `60`
+- `beta` is at version code `61`
+- `alpha` is at 2 version codes: `64` and `65` (becasue you're doing some fancy
+  testing)
+
+And let's say that you App Store looks like this:
+
+- production is live at version code `81`
+
+In this case, `get_new_build_number` action would return `82` (because it is
+higher than all the other build numbers). Of course, you have to be
+authenticated to App Store using
+[app_store_connect_api_key][app-store-connect-api-key].
+
+This makes it easy to keep version codes in sync in your app across different
+app stores.
 
 ### Important note
 
@@ -143,11 +213,19 @@ If you have trouble using plugins, check out the [Plugins
 Troubleshooting](https://docs.fastlane.tools/plugins/plugins-troubleshooting/)
 guide.
 
-[fastlane-plugin-badge]: https://rawcdn.githack.com/fastlane/fastlane/master/fastlane/assets/plugin-badge.svg
-[fastlane-plugin]: https://rubygems.org/gems/fastlane-plugin-get_new_build_number
-[ruby-tmpdir]: https://ruby-doc.org/stdlib-2.5.1/libdoc/tmpdir/rdoc/Dir.html#method-c-tmpdir
+[fastlane-plugin-badge]:
+    https://rawcdn.githack.com/fastlane/fastlane/master/fastlane/assets/plugin-badge.svg
+[fastlane-plugin]:
+    https://rubygems.org/gems/fastlane-plugin-get_new_build_number
+[ruby-tmpdir]:
+    https://ruby-doc.org/stdlib-2.5.1/libdoc/tmpdir/rdoc/Dir.html#method-c-tmpdir
 [app-store]: https://docs.fastlane.tools/actions/app_store_build_number
 [testflight]: https://docs.fastlane.tools/actions/latest_testflight_build_number
-[google-play]: https://docs.fastlane.tools/actions/google_play_track_version_codes
-[fad]: https://github.com/fastlane/fastlane-plugin-firebase_app_distribution/blob/master/lib/fastlane/plugin/firebase_app_distribution/actions/firebase_app_distribution_get_latest_release.rb
-[app-center]: https://github.com/microsoft/fastlane-plugin-appcenter/blob/master/lib/fastlane/plugin/appcenter/actions/appcenter_fetch_version_number.rb
+[google-play]:
+    https://docs.fastlane.tools/actions/google_play_track_version_codes
+[fad]:
+    https://github.com/fastlane/fastlane-plugin-firebase_app_distribution/blob/master/lib/fastlane/plugin/firebase_app_distribution/actions/firebase_app_distribution_get_latest_release.rb
+[app-center]:
+    https://github.com/microsoft/fastlane-plugin-appcenter/blob/master/lib/fastlane/plugin/appcenter/actions/appcenter_fetch_version_number.rb
+[app-store-connect-api-key]:
+    https://docs.fastlane.tools/actions/app_store_connect_api_key
