@@ -1,0 +1,3 @@
+lane :test do
+  get_new_build_number
+end
