@@ -27,8 +27,9 @@ module Fastlane
 
         app_store_build_number = 0
         unless bundle_identifier.nil?
-          app_store_build_number = Fastlane::Actions::LatestTestflightBuildNumberAction.run(
+          app_store_build_number = Fastlane::Actions::AppStoreBuildNumberAction.run(
             app_identifier: bundle_identifier,
+            platform: "IOS",
           )  
 
           UI.message "build number (App Store): #{app_store_build_number}"
@@ -98,7 +99,7 @@ module Fastlane
       # Returns highest build number for the given track.
       def self.get_version_code(track:, package_name:, json_key:)
         begin
-          codes = google_play_track_version_codes(
+          codes = Fastlane::Actions::GooglePlayTrackVersionCodesAction.run(
             track: track,
             package_name: package_name,
             json_key: json_key,
