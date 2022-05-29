@@ -15,7 +15,7 @@ module Fastlane
         UI.message("firebase_app_android: #{params[:firebase_app_android]}")
 
         file = "#{Dir.tmpdir}/highest_build_number.txt"
-        UI.message "Temp file location: #{file}"
+        UI.message "Temporary file location: #{file}"
 
         if(File.exist?(file)) 
           UI.success "File with new number file exists. Reading build number from it..." 
