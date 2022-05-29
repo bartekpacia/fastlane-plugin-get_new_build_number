@@ -7,8 +7,6 @@ module Fastlane
   module Actions
     class GetNewBuildNumberAction < Action
       def self.run(params)
-        UI.message("The get_new_build_number plugin is working!")
-
         UI.message("bundle_identifier: #{params[:bundle_identifier]}")
         UI.message("package_name: #{params[:package_name]}")
         UI.message("google_play_json_key_path: #{params[:google_play_json_key_path]}")
@@ -34,7 +32,10 @@ module Fastlane
             firebase_app_android: params[:firebase_app_android],
           )
           
-          File.open(file, "w") { |f| f.write "#{highest_build_number}\n" }
+          File.open(file, "w") do |f|
+            f.write "#{highest_build_number}\n"
+            UI.message "Wrote #{highest_build_number} to #{file}"
+          end
         end
 
         UI.success "Highest build number: #{highest_build_number}"
