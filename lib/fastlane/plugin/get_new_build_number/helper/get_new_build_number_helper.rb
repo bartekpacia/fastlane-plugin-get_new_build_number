@@ -6,7 +6,7 @@ module Fastlane
 
   module Helper
     class GetNewBuildNumberHelper
-      def self.get_highest_build_number(
+      def self.get_latest_build_number(
         bundle_identifier: nil,
         package_name: nil,
         google_play_json_key_path: nil,
@@ -31,28 +31,28 @@ module Fastlane
             platform: "IOS"
           )
 
-          UI.message("build number (App Store): #{app_store_build_number}")
+          UI.message("Latest build number (App Store): #{app_store_build_number}")
         end
 
-        google_play_build_number_prod = get_version_code(
+        google_play_build_number_prod = get_google_play_build_number(
           track: "production",
           package_name: package_name,
           json_key: google_play_json_key_path
         )
 
-        google_play_build_number_beta = get_version_code(
+        google_play_build_number_beta = get_google_play_build_number(
           track: "beta",
           package_name: package_name,
           json_key: google_play_json_key_path
         )
 
-        google_play_build_number_alpha = get_version_code(
+        google_play_build_number_alpha = get_google_play_build_number(
           track: "alpha",
           package_name: package_name,
           json_key: google_play_json_key_path
         )
 
-        google_play_build_number_internal = get_version_code(
+        google_play_build_number_internal = get_google_play_build_number(
           track: "internal",
           package_name: package_name,
           json_key: google_play_json_key_path
@@ -65,7 +65,7 @@ module Fastlane
           google_play_build_number_internal
         ].max
 
-        UI.message("build number (Google Play Store): #{google_play_build_number}")
+        UI.message("Latest build number (Google Play Store): #{google_play_build_number}")
 
         fad_build_number_ios = 0
         unless firebase_app_ios.nil?
@@ -74,7 +74,7 @@ module Fastlane
             service_credentials_file: firebase_json_key_path
           )[:buildVersion].to_i
 
-          UI.message("build number (Firebase App Distribution iOS): #{fad_build_number_ios}")
+          UI.message("Latest build (Firebase App Distribution iOS): #{fad_build_number_ios}")
         end
 
         fad_build_number_android = 0
@@ -84,7 +84,7 @@ module Fastlane
             service_credentials_file: firebase_json_key_path
           )[:buildVersion].to_i
 
-          UI.message("build number (Firebase App Distribution Android): #{fad_build_number_android}")
+          UI.message("Latest build (Firebase App Distribution Android): #{fad_build_number_android}")
         end
 
         return [
@@ -95,8 +95,9 @@ module Fastlane
         ].max
       end
 
-      # Returns highest build number for the given track.
-      def self.get_version_code(track:, package_name:, json_key:)
+      # Returns the latest build number ("version code", in Android terminology)
+      # for the given Google Play track.
+      def self.get_google_play_build_number(track:, package_name:, json_key:)
         codes = Fastlane::Actions::GooglePlayTrackVersionCodesAction.run(
           track: track,
           package_name: package_name,
@@ -105,7 +106,7 @@ module Fastlane
 
         return codes.max
       rescue StandardError
-        UI.message("Version code not found for track #{track}")
+        UI.message("No build numbers found for track #{track}")
         return 0
       end
     end

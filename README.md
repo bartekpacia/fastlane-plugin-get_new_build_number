@@ -27,8 +27,8 @@ Supported services:
       [firebase_app_distribution_get_latest_release][fad])
 - [ ] App Center (via [appcenter_fetch_version_number][app-center])
 
-The highest build number is persisted in
-[$TMPDIR][ruby-tmpdir]`/highest_build_number.txt`, so you can use it across
+The _latest_ build number is persisted in
+[$TMPDIR][ruby-tmpdir]`/latest_build_number.txt`, so you can use it across
 `fastlane` invocations. For example, you could safely do:
 
 ```bash
@@ -37,13 +37,13 @@ $ cd android && bundle exec fastlane prod && cd ..
 $ cd symbian && bundle exec fastlane prod && cd .. # lol
 ```
 
-The first `fastlane` invocation retrieves the _highest_ build number. Then, the
-2 subsequent invocations simply reuse the _highest_ build number from the file.
+The first `fastlane` invocation retrieves the _latest_ build number. Then, the 2
+subsequent invocations simply reuse the _latest_ build number from the file.
 
 The _new_ build number is derived using this complex forumla:
 
 ```
-new_build_number = highest_build_number + 1
+new_build_number = latest_build_number + 1
 ```
 
 ## Usage
@@ -62,7 +62,7 @@ Let's say that your Play Console looks like this:
   testing)
 
 In this case, `get_new_build_number` action would return `66` (because it is
-higher than all the other build numbers).
+newer/higher/bigger than all the other build numbers).
 
 ```ruby
 # android/fastlane/Fastfile
@@ -141,7 +141,7 @@ And let's say that you App Store looks like this:
 - production is live at version code `81`
 
 In this case, `get_new_build_number` action would return `82` (because it is
-higher than all the other build numbers). Of course, you have to be
+newer/higher/bigger than all the other build numbers). Of course, you have to be
 authenticated to App Store using
 [app_store_connect_api_key][app-store-connect-api-key].
 
@@ -213,19 +213,12 @@ If you have trouble using plugins, check out the [Plugins
 Troubleshooting](https://docs.fastlane.tools/plugins/plugins-troubleshooting/)
 guide.
 
-[fastlane-plugin-badge]:
-    https://rawcdn.githack.com/fastlane/fastlane/master/fastlane/assets/plugin-badge.svg
-[fastlane-plugin]:
-    https://rubygems.org/gems/fastlane-plugin-get_new_build_number
-[ruby-tmpdir]:
-    https://ruby-doc.org/stdlib-2.5.1/libdoc/tmpdir/rdoc/Dir.html#method-c-tmpdir
+[fastlane-plugin-badge]: https://rawcdn.githack.com/fastlane/fastlane/master/fastlane/assets/plugin-badge.svg
+[fastlane-plugin]: https://rubygems.org/gems/fastlane-plugin-get_new_build_number
+[ruby-tmpdir]: https://ruby-doc.org/stdlib-2.5.1/libdoc/tmpdir/rdoc/Dir.html#method-c-tmpdir
 [app-store]: https://docs.fastlane.tools/actions/app_store_build_number
 [testflight]: https://docs.fastlane.tools/actions/latest_testflight_build_number
-[google-play]:
-    https://docs.fastlane.tools/actions/google_play_track_version_codes
-[fad]:
-    https://github.com/fastlane/fastlane-plugin-firebase_app_distribution/blob/master/lib/fastlane/plugin/firebase_app_distribution/actions/firebase_app_distribution_get_latest_release.rb
-[app-center]:
-    https://github.com/microsoft/fastlane-plugin-appcenter/blob/master/lib/fastlane/plugin/appcenter/actions/appcenter_fetch_version_number.rb
-[app-store-connect-api-key]:
-    https://docs.fastlane.tools/actions/app_store_connect_api_key
+[google-play]: https://docs.fastlane.tools/actions/google_play_track_version_codes
+[fad]: https://github.com/fastlane/fastlane-plugin-firebase_app_distribution/blob/master/lib/fastlane/plugin/firebase_app_distribution/actions/firebase_app_distribution_get_latest_release.rb
+[app-center]: https://github.com/microsoft/fastlane-plugin-appcenter/blob/master/lib/fastlane/plugin/appcenter/actions/appcenter_fetch_version_number.rb
+[app-store-connect-api-key]: https://docs.fastlane.tools/actions/app_store_connect_api_key
