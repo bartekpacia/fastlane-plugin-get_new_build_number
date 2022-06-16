@@ -14,38 +14,38 @@ module Fastlane
         UI.message("firebase_app_ios: #{params[:firebase_app_ios]}")
         UI.message("firebase_app_android: #{params[:firebase_app_android]}")
 
-        file = "#{Dir.tmpdir}/highest_build_number.txt"
-        UI.message "Temp file location: #{file}"
+        file = "#{Dir.tmpdir}/latest_build_number.txt"
+        UI.message("Temporary file location: #{file}")
 
-        if(File.exist?(file)) 
-          UI.success "File with new number file exists. Reading build number from it..." 
-          highest_build_number = File.read(file).to_i
-        else 
-          UI.message "File with new build number does not exist. New build number will be "\
-            "retrieved and file with it will be created."
-          highest_build_number = Helper::GetNewBuildNumberHelper.get_highest_build_number(
+        if File.exist?(file)
+          UI.success("File with new number file exists. Reading build number from it...")
+          latest_build_number = File.read(file).to_i
+        else
+          UI.message("File with new build number does not exist. New build number will be "\
+            "retrieved and temporary file with it will be created.")
+          latest_build_number = Helper::GetNewBuildNumberHelper.get_latest_build_number(
             bundle_identifier: params[:bundle_identifier],
             package_name: params[:package_name],
             google_play_json_key_path: params[:google_play_json_key_path],
             firebase_json_key_path: params[:firebase_json_key_path],
             firebase_app_ios: params[:firebase_app_ios],
-            firebase_app_android: params[:firebase_app_android],
+            firebase_app_android: params[:firebase_app_android]
           )
-          
+
           File.open(file, "w") do |f|
-            f.write "#{highest_build_number}\n"
-            UI.message "Wrote #{highest_build_number} to #{file}"
+            f.write("#{latest_build_number}\n")
+            UI.message("Wrote #{latest_build_number} to #{file}")
           end
         end
 
-        UI.success "Highest build number: #{highest_build_number}"
+        UI.success("Latest build number: #{latest_build_number}")
 
-        if highest_build_number.is_a? Integer
-          new_highest_build_number = highest_build_number + 1
-          UI.success "New build number: #{new_highest_build_number}"
-          return new_highest_build_number
+        if latest_build_number.kind_of?(Integer)
+          new_latest_build_number = latest_build_number + 1
+          UI.success("New build number: #{new_latest_build_number}")
+          return new_latest_build_number
         else
-          UI.error "Highest build number is not an Integer"
+          UI.error("Latest build number is not an Integer")
           return nil
 
         end
@@ -60,7 +60,7 @@ module Fastlane
       end
 
       def self.return_value
-        "An integer representing a new build number. It's the highest build "\
+        "An integer representing a new build number. It's the latest build "\
         "number collected from all services (e.g App Store, Google Play, App "\
         "Center) plus 1."
       end
@@ -77,43 +77,43 @@ module Fastlane
             env_name: "APP_BUNDLE_ID",
             description: "iOS bundle identifier",
             optional: true,
-            type: String,
+            type: String
           ),
           FastlaneCore::ConfigItem.new(
             key: :package_name,
             env_name: "APP_PACKAGE_NAME",
             description: "Android package name",
             optional: true,
-            type: String,
+            type: String
           ),
           FastlaneCore::ConfigItem.new(
             key: :google_play_json_key_path,
             env_name: "GOOGLE_PLAY_JSON_KEY_PATH",
             description: "Path to the Google Play Android Developer JSON key",
             optional: true,
-            type: String,
+            type: String
           ),
           FastlaneCore::ConfigItem.new(
             key: :firebase_json_key_path,
             env_name: "FIREBASE_JSON_KEY_PATH",
             description: "Path to the Firebase Admin JSON key",
             optional: true,
-            type: String,
+            type: String
           ),
           FastlaneCore::ConfigItem.new(
             key: :firebase_app_ios,
             env_name: "FIREBASE_APP_IOS",
             description: "Firebase iOS app ID",
             optional: true,
-            type: String,
+            type: String
           ),
           FastlaneCore::ConfigItem.new(
             key: :firebase_app_android,
             env_name: "FIREBASE_APP_ANDROID",
             description: "Firebase Android app ID",
             optional: true,
-            type: String,
-          ),
+            type: String
+          )
         ]
       end
 
