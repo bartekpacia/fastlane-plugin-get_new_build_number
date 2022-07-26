@@ -13,10 +13,9 @@ Gem::Specification.new do |spec|
   spec.license       = "MIT"
 
   spec.files         = Dir["lib/**/*"] + %w(README.md LICENSE)
-  spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ['lib']
 
-  spec.required_ruby_version = '>= 2.5'
+  spec.required_ruby_version = '>= 3.1'
 
   # Don't add a dependency to fastlane or fastlane_re
   # since this would cause a circular dependency
@@ -35,4 +34,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency('simplecov')
 
   spec.add_dependency("fastlane-plugin-firebase_app_distribution")
+  spec.metadata['rubygems_mfa_required'] = 'true'
 end

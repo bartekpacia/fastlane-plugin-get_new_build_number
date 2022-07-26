@@ -21,8 +21,8 @@ module Fastlane
           UI.success("File with new number file exists. Reading build number from it...")
           latest_build_number = File.read(file).to_i
         else
-          UI.message("File with new build number does not exist. New build number will be "\
-            "retrieved and temporary file with it will be created.")
+          UI.message("File with new build number does not exist. New build number will be " \
+                     "retrieved and temporary file with it will be created.")
           latest_build_number = Helper::GetNewBuildNumberHelper.get_latest_build_number(
             bundle_identifier: params[:bundle_identifier],
             package_name: params[:package_name],
@@ -61,9 +61,9 @@ module Fastlane
       end
 
       def self.return_value
-        "An integer representing a new build number. It's the latest build "\
-        "number collected from all services (e.g App Store, Google Play, App "\
-        "Center) plus 1."
+        "An integer representing a new build number. It's the latest build " \
+          "number collected from all services (e.g App Store, Google Play, App " \
+          "Center) plus 1."
       end
 
       def self.details
