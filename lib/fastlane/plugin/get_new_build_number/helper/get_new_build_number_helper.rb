@@ -10,9 +10,10 @@ module Fastlane
         bundle_identifier: nil,
         package_name: nil,
         google_play_json_key_path: nil,
+        app_store_initial_build_number: nil,
         firebase_json_key_path: nil,
         firebase_app_ios: nil,
-        firebase_app_android: nil
+        firebase_app_android: nil,
       )
         if bundle_identifier.nil? && package_name.nil?
           UI.error("Both bundle_identifier and package_name are nil")
@@ -29,6 +30,7 @@ module Fastlane
           app_store_build_number = Fastlane::Actions::AppStoreBuildNumberAction.run(
             app_identifier: bundle_identifier,
             platform: "IOS"
+            initial_build_number: app_store_initial_build_number || 1
           )
 
           UI.message("Latest build number (App Store): #{app_store_build_number}")
