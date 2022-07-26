@@ -95,6 +95,13 @@ module Fastlane
             type: String
           ),
           FastlaneCore::ConfigItem.new(
+            key: :app_store_initial_build_number,
+            env_name: "APP_STORE_INITIAL_BUILD_NUMBER",
+            description: "Build number to use if there's nothing in App Store.",
+            optional: true,
+            type: String,
+          ),
+          FastlaneCore::ConfigItem.new(
             key: :firebase_json_key_path,
             env_name: "FIREBASE_JSON_KEY_PATH",
             description: "Path to the Firebase Admin JSON key",
