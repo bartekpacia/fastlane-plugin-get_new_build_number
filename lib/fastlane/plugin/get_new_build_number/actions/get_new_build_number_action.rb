@@ -21,7 +21,7 @@ module Fastlane
           UI.success("File with new number file exists. Reading build number from it...")
           latest_build_number = File.read(file).to_i
         else
-          UI.message("File with new build number does not exist. New build number will be " \
+          UI.important("File with new build number does not exist. New build number will be " \
                      "retrieved and temporary file with it will be created.")
           latest_build_number = Helper::GetNewBuildNumberHelper.get_latest_build_number(
             bundle_identifier: params[:bundle_identifier],

@@ -68,25 +68,41 @@ module Fastlane
         ].max
 
         UI.message("Latest build number (Google Play Store): #{google_play_build_number}")
-
+        
         fad_build_number_ios = 0
-        unless firebase_app_ios.nil?
-          fad_build_number_ios = Fastlane::Actions::FirebaseAppDistributionGetLatestReleaseAction.run(
-            app: firebase_app_ios,
-            service_credentials_file: firebase_json_key_path
-          )[:buildVersion].to_i
+        begin
+          unless firebase_app_ios.nil?
+            response = Fastlane::Actions::FirebaseAppDistributionGetLatestReleaseAction.run(
+              app: firebase_app_ios,
+              service_credentials_file: firebase_json_key_path
+            )
 
-          UI.message("Latest build (Firebase App Distribution iOS): #{fad_build_number_ios}")
+            unless response.nil?
+              fad_build_number_ios = response[:buildVersion].to_i
+            end
+
+            UI.message("Latest build (Firebase App Distribution iOS): #{fad_build_number_ios}")
+          end
+        rescue StandardError => e
+          UI.error("Error getting latest build number (Firebase App Distribution iOS): #{e.message}")
         end
 
         fad_build_number_android = 0
-        unless firebase_app_android.nil?
-          fad_build_number_android = Fastlane::Actions::FirebaseAppDistributionGetLatestReleaseAction.run(
-            app: firebase_app_android,
-            service_credentials_file: firebase_json_key_path
-          )[:buildVersion].to_i
+        begin
+          unless firebase_app_android.nil?
+            response = Fastlane::Actions::FirebaseAppDistributionGetLatestReleaseAction.run(
+              app: firebase_app_android,
+              service_credentials_file: firebase_json_key_path
+            )
 
-          UI.message("Latest build (Firebase App Distribution Android): #{fad_build_number_android}")
+            unless response.nil?
+              fad_build_number_android = response[:buildVersion].to_i
+            end
+
+            UI.message("Latest build (Firebase App Distribution Android): #{fad_build_number_android}")
+          end
+        rescue StandardError => e
+          UI.error("Error getting latest build number (Firebase App Distribution Android): #{e.message}")
         end
 
         return [
@@ -100,17 +116,22 @@ module Fastlane
       # Returns the latest build number ("version code", in Android terminology)
       # for the given Google Play track.
       def self.get_google_play_build_number(track:, package_name:, json_key:)
-        codes = Fastlane::Actions::GooglePlayTrackVersionCodesAction.run(
-          track:,
-          package_name:,
-          json_key:
-        )
+        begin
+          codes = Fastlane::Actions::GooglePlayTrackVersionCodesAction.run(
+            track:,
+            package_name:,
+            json_key:
+          )
 
-        return codes.max
-      rescue StandardError
-        UI.message("No build numbers found for track #{track}")
-        return 0
+          return codes.max
+        rescue StandardError
+          UI.message("No build numbers found for track #{track} (Google Play Store)")
+          return 0
+        end
       end
+
+      # TODO: Don't duplicate so much code
+      # def self.get_firebase_app_distribution_build_number()
     end
   end
 end
