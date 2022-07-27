@@ -21,23 +21,6 @@ module Fastlane
         "A string representing a new build name. It's the latest git tag with the first " \
           "character stripped (so v4.2.0 becomes 4.2.0)"
       end
-
-      # def self.details
-      #   # Optional:
-      #   ""
-      # end
-
-      def self.available_options
-        []
-      end
-
-      # def self.is_supported?(platform)
-      #   # Adjust this if your plugin only works for a particular platform (iOS vs. Android, for example)
-      #   # See: https://docs.fastlane.tools/advanced/#control-configuration-by-lane-and-by-platform
-      #   #
-      #   # [:ios, :mac, :android].include?(platform)
-      #   true
-      # end
     end
   end
 end
