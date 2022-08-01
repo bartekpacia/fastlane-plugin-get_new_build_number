@@ -18,25 +18,25 @@ jobs:
           ruby-version: 3.1.2
           bundler-cache: true
 
-      - name: bundle install
-        run: bundle install
+      - name: Create credentials file
+        run: |
+          mkdir -p $HOME/.gem
+          touch $HOME/.gem/credentials 
+          chmod 0600 $HOME/.gem/credentials
+          printf -- "---\n" >> $HOME/.gem/credentials
+          printf ":rubygems: ${{ secrets.RUBYGEMS_API_KEY }}\n" >> $HOME/.gem/credentials
+          printf ":github_packages: Bearer ${{ secrets.GITHUB_TOKEN }}\n" >> $HOME/.gem/credentials
+          cat $HOME/.gem/credentials
 
       - name: Build gem
         run: gem build *.gemspec
 
-      - name: Publish gem to RubyGems
-        env:
-          RUBYGEMS_API_KEY: "${{secrets.RUBYGEMS_API_KEY}}"
-        run: |
-          mkdir -p $HOME/.gem
-          touch $HOME/.gem/credentials
-          chmod 0600 $HOME/.gem/credentials
-          printf -- "---\n:rubygems_api_key: ${RUBYGEMS_API_KEY}\n" > $HOME/.gem/credentials
-          gem push *.gem
-
       - name: Publish gem to GitHub Packages
         run: |
           gem push \
-          --key github \
+          --key github_packages \
           --host https://rubygems.pkg.github.com/bartekpacia \
-          OCTO-GEM-0.0.1.gem
+          *.gem
+
+      - name: Publish gem to RubyGems
+        run: gem push --key rubygems *.gem
