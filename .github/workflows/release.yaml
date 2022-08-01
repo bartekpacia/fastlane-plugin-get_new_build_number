@@ -12,13 +12,19 @@ jobs:
       - name: Clone repository
         uses: actions/checkout@v3
 
-      - uses: ruby/setup-ruby@v1
+      - name: Install Ruby
+        uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.1.0
+          ruby-version: 3.1.2
+          bundler-cache: true
 
-      - run: bundle install
+      - name: bundle install
+        run: bundle install
 
-      - name: publish gem
+      - name: Build gem
+        run: gem build *.gemspec
+
+      - name: Publish gem to RubyGems
         env:
           RUBYGEMS_API_KEY: "${{secrets.RUBYGEMS_API_KEY}}"
         run: |
@@ -26,5 +32,11 @@ jobs:
           touch $HOME/.gem/credentials
           chmod 0600 $HOME/.gem/credentials
           printf -- "---\n:rubygems_api_key: ${RUBYGEMS_API_KEY}\n" > $HOME/.gem/credentials
-          gem build *.gemspec
           gem push *.gem
+
+      - name: Publish gem to GitHub Packages
+        run: |
+          gem push \
+          --key github \
+          --host https://rubygems.pkg.github.com/bartekpacia \
+          OCTO-GEM-0.0.1.gem
