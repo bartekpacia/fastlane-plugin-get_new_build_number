@@ -3,7 +3,7 @@ name: release
 on:
   push:
     tags:
-      - "v*"
+      - 'v*'
 
 jobs:
   main:
@@ -15,8 +15,7 @@ jobs:
       - name: Install Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.1.2
-          bundler-cache: true
+          ruby-version: '3.2'
 
       - name: Create credentials file
         run: |
