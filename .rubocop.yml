@@ -3,7 +3,7 @@ require:
   - rubocop/require_tools
   - rubocop-performance
 AllCops:
-  TargetRubyVersion: 3.1
+  TargetRubyVersion: 3.2
   NewCops: enable
   Include:
     - "**/*.rb"
@@ -166,7 +166,7 @@ Style/CollectionMethods:
   Enabled: false
 Style/MethodCallWithArgsParentheses:
   Enabled: true
-  IgnoredMethods:
+  AllowedMethods:
     - require
     - require_relative
     - fastlane_require
