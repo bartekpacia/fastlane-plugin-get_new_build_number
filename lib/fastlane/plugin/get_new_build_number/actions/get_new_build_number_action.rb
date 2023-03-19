@@ -9,7 +9,7 @@ module Fastlane
       def self.run(params)
         FastlaneCore::PrintTable.print_values(
           config: params,
-          title: "Summary for get_new_build_number #{GetNewBuildNumber::VERSION}",
+          title: "Summary for get_new_build_number #{GetNewBuildNumber::VERSION}"
         )
 
         file = File.join(Dir.tmpdir, "latest_build_number.txt")
@@ -20,7 +20,7 @@ module Fastlane
           latest_build_number = File.read(file).to_i
         else
           UI.important("File with new build number does not exist. New build number will be " \
-                     "retrieved and temporary file with it will be created.")
+                       "retrieved and temporary file with it will be created.")
           latest_build_number = Helper::GetNewBuildNumberHelper.get_latest_build_number(
             bundle_identifier: params[:bundle_identifier],
             package_name: params[:package_name],

@@ -67,7 +67,7 @@ module Fastlane
         ].max
 
         UI.message("Latest build number (Google Play Store): #{google_play_build_number}")
-        
+
         fad_build_number_ios = 0
         begin
           unless firebase_app_ios.nil?
@@ -115,18 +115,16 @@ module Fastlane
       # Returns the latest build number ("version code", in Android terminology)
       # for the given Google Play track.
       def self.get_google_play_build_number(track:, package_name:, json_key:)
-        begin
-          codes = Fastlane::Actions::GooglePlayTrackVersionCodesAction.run(
-            track:,
-            package_name:,
-            json_key:
-          )
+        codes = Fastlane::Actions::GooglePlayTrackVersionCodesAction.run(
+          track:,
+          package_name:,
+          json_key:
+        )
 
-          return codes.max
-        rescue StandardError
-          UI.message("No build numbers found for track #{track} (Google Play Store)")
-          return 0
-        end
+        return codes.max
+      rescue StandardError
+        UI.message("No build numbers found for track #{track} (Google Play Store)")
+        return 0
       end
 
       # TODO: Don't duplicate so much code
