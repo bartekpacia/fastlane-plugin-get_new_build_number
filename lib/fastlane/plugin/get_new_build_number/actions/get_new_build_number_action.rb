@@ -7,18 +7,16 @@ module Fastlane
   module Actions
     class GetNewBuildNumberAction < Action
       def self.run(params)
-        UI.message("bundle_identifier: #{params[:bundle_identifier]}")
-        UI.message("package_name: #{params[:package_name]}")
-        UI.message("google_play_json_key_path: #{params[:google_play_json_key_path]}")
-        UI.message("firebase_json_key_path: #{params[:firebase_json_key_path]}")
-        UI.message("firebase_app_ios: #{params[:firebase_app_ios]}")
-        UI.message("firebase_app_android: #{params[:firebase_app_android]}")
+        FastlaneCore::PrintTable.print_values(
+          config: params,
+          title: "Summary for get_new_build_number #{GetNewBuildNumber::VERSION}",
+        )
 
-        file = "#{Dir.tmpdir}/latest_build_number.txt"
-        UI.message("Temporary file location: #{file}")
+        file = File.join(Dir.tmpdir, "latest_build_number.txt")
+        UI.message("Looking for temporary build number file at: #{file}")
 
         if File.exist?(file)
-          UI.success("File with new number file exists. Reading build number from it...")
+          UI.message("Found temporary build number file")
           latest_build_number = File.read(file).to_i
         else
           UI.important("File with new build number does not exist. New build number will be " \
@@ -39,14 +37,14 @@ module Fastlane
           end
         end
 
-        UI.success("Latest build number: #{latest_build_number}")
+        UI.message("Latest build number: #{latest_build_number}")
 
         if latest_build_number.kind_of?(Integer)
           new_latest_build_number = latest_build_number + 1
-          UI.success("New build number: #{new_latest_build_number}")
+          UI.success("New build number (latest + 1): #{new_latest_build_number}")
           return new_latest_build_number
         else
-          UI.error("Latest build number is not an Integer")
+          UI.error("Latest build number is not an Integer (#{latest_build_number})")
           return nil
 
         end
