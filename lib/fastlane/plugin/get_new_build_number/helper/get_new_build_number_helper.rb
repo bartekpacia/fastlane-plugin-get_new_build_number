@@ -37,25 +37,25 @@ module Fastlane
 
         google_play_build_number_prod = get_google_play_build_number(
           track: "production",
-          package_name:,
+          package_name: package_name,
           json_key: google_play_json_key_path
         )
 
         google_play_build_number_beta = get_google_play_build_number(
           track: "beta",
-          package_name:,
+          package_name: package_name,
           json_key: google_play_json_key_path
         )
 
         google_play_build_number_alpha = get_google_play_build_number(
           track: "alpha",
-          package_name:,
+          package_name: package_name,
           json_key: google_play_json_key_path
         )
 
         google_play_build_number_internal = get_google_play_build_number(
           track: "internal",
-          package_name:,
+          package_name: package_name,
           json_key: google_play_json_key_path
         )
 
@@ -116,9 +116,9 @@ module Fastlane
       # for the given Google Play track.
       def self.get_google_play_build_number(track:, package_name:, json_key:)
         codes = Fastlane::Actions::GooglePlayTrackVersionCodesAction.run(
-          track:,
-          package_name:,
-          json_key:
+          track: track,
+          package_name: package_name,
+          json_key: json_key
         )
 
         return codes.max
