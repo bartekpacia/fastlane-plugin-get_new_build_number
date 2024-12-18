@@ -12,7 +12,7 @@ module Fastlane
           title: "Summary for get_new_build_number #{GetNewBuildNumber::VERSION}"
         )
         
-        useTempBuildNumber = params[:use_temp_build_number]
+        useTempBuildNumber = defined?(params[:use_temp_build_number]) ? params[:use_temp_build_number] : true
         file = File.join(Dir.tmpdir, "latest_build_number.txt")
         
         if useTempBuildNumber
@@ -120,6 +120,13 @@ module Fastlane
             description: "Firebase Android app ID",
             optional: true,
             type: String
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :use_temp_build_number,
+            env_name: "USE_TEMP_BUILD_NUMBER",
+            description: "Cache the build number across multiple runs of this action",
+            optional: true,
+            type: Boolean
           )
         ]
       end
