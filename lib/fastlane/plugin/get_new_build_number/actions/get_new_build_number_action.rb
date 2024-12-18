@@ -12,29 +12,30 @@ module Fastlane
           title: "Summary for get_new_build_number #{GetNewBuildNumber::VERSION}"
         )
 
+        use_temp_build_number = defined?(params[:use_temp_build_number]) ? params[:use_temp_build_number] : true
         file = File.join(Dir.tmpdir, "latest_build_number.txt")
-        UI.message("Looking for temporary build number file at: #{file}")
 
-        if File.exist?(file)
-          UI.message("Found temporary build number file")
-          latest_build_number = File.read(file).to_i
-        else
-          UI.important("File with new build number does not exist. New build number will be " \
-                       "retrieved and temporary file with it will be created.")
-          latest_build_number = Helper::GetNewBuildNumberHelper.get_latest_build_number(
-            bundle_identifier: params[:bundle_identifier],
-            package_name: params[:package_name],
-            google_play_json_key_path: params[:google_play_json_key_path],
-            app_store_initial_build_number: params[:app_store_initial_build_number],
-            firebase_json_key_path: params[:firebase_json_key_path],
-            firebase_app_ios: params[:firebase_app_ios],
-            firebase_app_android: params[:firebase_app_android]
-          )
+        if use_temp_build_number
+          UI.message("Looking for temporary build number file at: #{file}")
+          if File.exist?(file)
+            UI.message("Found temporary build number file")
+            latest_build_number = File.read(file).to_i
+          else
+            UI.important("File with new build number does not exist. New build number will be " \
+                         "retrieved and temporary file with it will be created.")
+            latest_build_number = Helper::GetNewBuildNumberHelper.get_latest_build_number_from_params(
+              params
+            )
 
-          File.open(file, "w") do |f|
-            f.write("#{latest_build_number}\n")
-            UI.message("Wrote #{latest_build_number} to #{file}")
+            File.open(file, "w") do |f|
+              f.write("#{latest_build_number}\n")
+              UI.message("Wrote #{latest_build_number} to #{file}")
+            end
           end
+        else
+          latest_build_number = Helper::GetNewBuildNumberHelper.get_latest_build_number_from_params(
+            params
+          )
         end
 
         UI.message("Latest build number: #{latest_build_number}")
@@ -119,6 +120,13 @@ module Fastlane
             description: "Firebase Android app ID",
             optional: true,
             type: String
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :use_temp_build_number,
+            env_name: "USE_TEMP_BUILD_NUMBER",
+            description: "Cache the build number across multiple runs of this action",
+            optional: true,
+            type: Boolean
           )
         ]
       end
