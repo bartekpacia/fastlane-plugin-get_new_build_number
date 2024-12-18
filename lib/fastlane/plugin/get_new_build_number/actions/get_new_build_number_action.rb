@@ -11,22 +11,22 @@ module Fastlane
           config: params,
           title: "Summary for get_new_build_number #{GetNewBuildNumber::VERSION}"
         )
-        
-        useTempBuildNumber = defined?(params[:use_temp_build_number]) ? params[:use_temp_build_number] : true
+
+        use_temp_build_number = defined?(params[:use_temp_build_number]) ? params[:use_temp_build_number] : true
         file = File.join(Dir.tmpdir, "latest_build_number.txt")
-        
-        if useTempBuildNumber
+
+        if use_temp_build_number
           UI.message("Looking for temporary build number file at: #{file}")
           if File.exist?(file)
             UI.message("Found temporary build number file")
             latest_build_number = File.read(file).to_i
-          else 
+          else
             UI.important("File with new build number does not exist. New build number will be " \
                          "retrieved and temporary file with it will be created.")
             latest_build_number = Helper::GetNewBuildNumberHelper.get_latest_build_number_from_params(
               params
             )
-  
+
             File.open(file, "w") do |f|
               f.write("#{latest_build_number}\n")
               UI.message("Wrote #{latest_build_number} to #{file}")
