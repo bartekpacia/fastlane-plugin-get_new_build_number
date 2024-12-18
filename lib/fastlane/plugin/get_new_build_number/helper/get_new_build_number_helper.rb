@@ -5,6 +5,18 @@ module Fastlane
 
   module Helper
     class GetNewBuildNumberHelper
+    	def self.get_latest_build_number_from_params(params)
+    		return self.get_latest_build_number(
+    			bundle_identifier: params[:bundle_identifier],
+					package_name: params[:package_name],
+					google_play_json_key_path: params[:google_play_json_key_path],
+					app_store_initial_build_number: params[:app_store_initial_build_number],
+					firebase_json_key_path: params[:firebase_json_key_path],
+					firebase_app_ios: params[:firebase_app_ios],
+					firebase_app_android: params[:firebase_app_android]
+				)
+    	end
+    	
       def self.get_latest_build_number(
         bundle_identifier: nil,
         package_name: nil,

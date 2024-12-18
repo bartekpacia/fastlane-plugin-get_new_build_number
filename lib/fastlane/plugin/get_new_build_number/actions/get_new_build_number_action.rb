@@ -11,30 +11,31 @@ module Fastlane
           config: params,
           title: "Summary for get_new_build_number #{GetNewBuildNumber::VERSION}"
         )
-
+        
+        useTempBuildNumber = params[:use_temp_build_number]
         file = File.join(Dir.tmpdir, "latest_build_number.txt")
-        UI.message("Looking for temporary build number file at: #{file}")
-
-        if File.exist?(file)
-          UI.message("Found temporary build number file")
-          latest_build_number = File.read(file).to_i
-        else
-          UI.important("File with new build number does not exist. New build number will be " \
-                       "retrieved and temporary file with it will be created.")
-          latest_build_number = Helper::GetNewBuildNumberHelper.get_latest_build_number(
-            bundle_identifier: params[:bundle_identifier],
-            package_name: params[:package_name],
-            google_play_json_key_path: params[:google_play_json_key_path],
-            app_store_initial_build_number: params[:app_store_initial_build_number],
-            firebase_json_key_path: params[:firebase_json_key_path],
-            firebase_app_ios: params[:firebase_app_ios],
-            firebase_app_android: params[:firebase_app_android]
-          )
-
-          File.open(file, "w") do |f|
-            f.write("#{latest_build_number}\n")
-            UI.message("Wrote #{latest_build_number} to #{file}")
+        
+        if useTempBuildNumber
+          UI.message("Looking for temporary build number file at: #{file}")
+          if File.exist?(file)
+            UI.message("Found temporary build number file")
+            latest_build_number = File.read(file).to_i
+          else 
+            UI.important("File with new build number does not exist. New build number will be " \
+                         "retrieved and temporary file with it will be created.")
+            latest_build_number = Helper::GetNewBuildNumberHelper.get_latest_build_number_from_params(
+              params
+            )
+  
+            File.open(file, "w") do |f|
+              f.write("#{latest_build_number}\n")
+              UI.message("Wrote #{latest_build_number} to #{file}")
+            end
           end
+        else
+          latest_build_number = Helper::GetNewBuildNumberHelper.get_latest_build_number_from_params(
+            params
+          )
         end
 
         UI.message("Latest build number: #{latest_build_number}")
