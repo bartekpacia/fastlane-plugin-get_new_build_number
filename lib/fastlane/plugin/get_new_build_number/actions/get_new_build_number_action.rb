@@ -7,7 +7,10 @@ module Fastlane
   module Actions
     class GetNewBuildNumberAction < Action
       def self.run(params)
-        print_summary(params)
+        FastlaneCore::PrintTable.print_values(
+          config: params,
+          title: "Summary for GetNewBuildNumber #{GetNewBuildNumber::VERSION}"
+        )
 
         use_temp_build_number = params[:use_temp_build_number] || true
         file_path = temp_file_path
@@ -15,13 +18,6 @@ module Fastlane
         latest_build_number = use_temp_build_number ? fetch_or_create_temp_build_number(file_path, params) : fetch_build_number(params)
 
         validate_and_increment_build_number(latest_build_number)
-      end
-
-      def self.print_summary(params)
-        FastlaneCore::PrintTable.print_values(
-          config: params,
-          title: "Summary for GetNewBuildNumber #{GetNewBuildNumber::VERSION}"
-        )
       end
 
       def self.temp_file_path
@@ -134,7 +130,7 @@ module Fastlane
             optional: true,
             type: Boolean
           )
-         ]
+        ]
       end
 
       def self.is_supported?(platform)
