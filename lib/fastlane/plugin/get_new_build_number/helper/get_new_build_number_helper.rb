@@ -121,7 +121,7 @@ module Fastlane
           google_play_build_number,
           fad_build_number_ios,
           fad_build_number_android
-        ].max
+        ].map(&:to_i).max
       end
 
       # Returns the latest build number ("version code", in Android terminology)
