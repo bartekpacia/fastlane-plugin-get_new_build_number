@@ -76,7 +76,7 @@ module Fastlane
           google_play_build_number_beta,
           google_play_build_number_alpha,
           google_play_build_number_internal
-        ].max
+        ].compact.max || 0
 
         UI.message("Latest build number (Google Play Store): #{google_play_build_number}")
 
@@ -121,7 +121,7 @@ module Fastlane
           google_play_build_number,
           fad_build_number_ios,
           fad_build_number_android
-        ].max
+        ].compact.map(&:to_i).max || 0
       end
 
       # Returns the latest build number ("version code", in Android terminology)
