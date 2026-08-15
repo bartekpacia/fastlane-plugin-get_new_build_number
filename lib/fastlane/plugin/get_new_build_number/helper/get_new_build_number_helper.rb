@@ -133,7 +133,7 @@ module Fastlane
           json_key: json_key
         )
 
-        return codes.max
+        return codes.compact.map(&:to_i).max
       rescue StandardError
         UI.message("No build numbers found for track #{track} (Google Play Store)")
         return 0
